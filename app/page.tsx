@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -76,6 +76,11 @@ export default function Home() {
   const [input, setInput] = useState(initialInput);
 
   const liveResult = useMemo(() => calculateScore(input), [input]);
+
+  useEffect(() => {
+    if (!started) return;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [started, step]);
 
   function setNumber(name: keyof ScoreInput, value: number) {
     setInput((current) => ({ ...current, [name]: value }));
