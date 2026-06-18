@@ -509,10 +509,16 @@ export default function Home() {
           </section>
 
           <section className="ticker" aria-label="Unhired facts">
-            <span>GHOSTED AGAIN</span><b>✦</b>
-            <span>FINAL ROUND SURVIVOR</span><b>✦</b>
-            <span>OPEN TO WORK SINCE FOREVER</span><b>✦</b>
-            <span>ENTRY-LEVEL: 3 YEARS REQUIRED</span><b>✦</b>
+            <div className="ticker-track">
+              <span>GHOSTED AGAIN</span><b>✦</b>
+              <span>FINAL ROUND SURVIVOR</span><b>✦</b>
+              <span>OPEN TO WORK SINCE FOREVER</span><b>✦</b>
+              <span>ENTRY-LEVEL: 3 YEARS REQUIRED</span><b>✦</b>
+              <span>GHOSTED AGAIN</span><b>✦</b>
+              <span>FINAL ROUND SURVIVOR</span><b>✦</b>
+              <span>OPEN TO WORK SINCE FOREVER</span><b>✦</b>
+              <span>ENTRY-LEVEL: 3 YEARS REQUIRED</span><b>✦</b>
+            </div>
           </section>
 
           <section className="how-section" id="how">
@@ -588,7 +594,15 @@ export default function Home() {
             <div><i style={{ width: `${((step + 1) / steps.length) * 100}%` }} /></div>
             <b>{step + 1}/{steps.length}</b>
           </div>
-          <form onSubmit={submit}>
+          <form
+            onSubmit={submit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !(e.target instanceof HTMLTextAreaElement)) {
+                e.preventDefault();
+                if (step < steps.length - 1) continueQuiz();
+              }
+            }}
+          >
             {steps[step]}
             {validationError && (
               <p className="validation-message" role="alert">

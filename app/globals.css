@@ -268,20 +268,29 @@ a {
 
 .ticker {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 24px;
   overflow: hidden;
-  white-space: nowrap;
-  padding: 15px;
+  padding: 15px 0;
   background: var(--ink);
   color: var(--paper);
   font-family: "DM Mono", monospace;
   font-size: 12px;
+  white-space: nowrap;
 }
 
-.ticker b {
+.ticker-track {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  animation: ticker-scroll 32s linear infinite;
+}
+
+.ticker-track b {
   color: var(--orange);
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 .how-section {
@@ -319,8 +328,17 @@ a {
 }
 
 .how-grid article > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--ink);
+  background: var(--orange);
   font-family: "DM Mono", monospace;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 3px 3px 0 var(--ink);
 }
 
 .how-grid h3 {
@@ -416,6 +434,16 @@ footer {
 
 .quiz-panel {
   min-height: 490px;
+  padding: 28px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  box-shadow: 8px 8px 0 var(--ink);
+  animation: quiz-panel-in 300ms ease-out;
+}
+
+@keyframes quiz-panel-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .quiz-panel h2 {
@@ -941,12 +969,31 @@ input[type="number"]:invalid {
   box-shadow: 3px 3px 0 var(--ink);
 }
 
+.league-tabs button small {
+  margin-left: 6px;
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.league-tabs button.active small {
+  opacity: 1;
+}
+
 .league-tabs .easter-egg {
   align-self: center;
 }
 
 .leaderboard-table {
   border: 2px solid var(--ink);
+}
+
+.leaderboard-body {
+  animation: fade-in 200ms ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
 }
 
 .leaderboard-row {
@@ -969,6 +1016,18 @@ input[type="number"]:invalid {
 
 .leaderboard-row:nth-child(3) {
   background: var(--acid);
+}
+
+.leaderboard-row:not(.leaderboard-header):hover {
+  background: #e6e2d8;
+}
+
+.leaderboard-row:nth-child(2):not(.leaderboard-header):hover {
+  background: #f04a28;
+}
+
+.leaderboard-row:nth-child(3):not(.leaderboard-header):hover {
+  background: #c8f02e;
 }
 
 .leaderboard-row > div {

@@ -14,7 +14,21 @@ const sampleRows = [
   { nickname: "AnonymousApplicant", score: 2894, title: "VP of Unanswered Applications", league: "Open Unemployment League", days: 201 },
 ];
 
+type LeagueTab = "Global" | "Internships" | "New Graduate" | "Layoff" | "Career Switch" | "Comeback";
+
+const leagueFilter: Record<LeagueTab, (row: typeof sampleRows[number]) => boolean> = {
+  Global: () => true,
+  Internships: (r) => r.league.includes("Intern"),
+  "New Graduate": (r) => r.league === "New Graduate League",
+  Layoff: (r) => r.league === "Layoff League",
+  "Career Switch": (r) => r.league === "Career Switcher League",
+  Comeback: (r) => r.league === "Comeback League",
+};
+
+const tabs: LeagueTab[] = ["Global", "Internships", "New Graduate", "Layoff", "Career Switch", "Comeback"];
+
 export default function LeaderboardPage() {
+  const [activeTab, setActiveTab] = useState<LeagueTab>("Global");
   const [localRows, setLocalRows] = useState<typeof sampleRows>([]);
 
   useEffect(() => {
@@ -37,6 +51,7 @@ export default function LeaderboardPage() {
   }, []);
 
   const rows = [...localRows, ...sampleRows]
+    .filter(leagueFilter[activeTab])
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 
@@ -59,18 +74,28 @@ export default function LeaderboardPage() {
           </p>
         </div>
         <div className="league-tabs">
-          <button className="active">Global</button>
-          <button>Internships</button>
-          <button>New Graduates</button>
-          <button>Layoffs</button>
+          {tabs.map((tab) => {
+            const count = [...localRows, ...sampleRows].filter(leagueFilter[tab]).length;
+            return (
+              <button
+                key={tab}
+                className={activeTab === tab ? "active" : ""}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+                <small>{count}</small>
+              </button>
+            );
+          })}
           <EasterEgg>
-            AI tokens ran out before we could build the other three tabs. Maybe next sprint.
+            AI tokens finally made it this sprint. Tabs filter by league now.
           </EasterEgg>
         </div>
         <div className="leaderboard-table">
           <div className="leaderboard-row leaderboard-header">
             <span>RANK</span><span>PLAYER</span><span>LEAGUE</span><span>DAYS</span><span>SCORE</span>
           </div>
+          <div className="leaderboard-body" key={activeTab}>
           {rows.map((row, index) => (
             <div className="leaderboard-row" key={`${row.nickname}-${index}`}>
               <b>#{String(index + 1).padStart(2, "0")}</b>
@@ -80,6 +105,7 @@ export default function LeaderboardPage() {
               <strong>{row.score.toLocaleString()}</strong>
             </div>
           ))}
+          </div>
         </div>
         <p className="leaderboard-note">
           Scores are self-reported. Glory is temporary. Ghosting is forever.
