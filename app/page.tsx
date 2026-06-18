@@ -22,7 +22,7 @@ const initialInput: ScoreInput = {
   applications: 100,
   ghosted: 50,
   autoRejected: 20,
-  humanRejected: 10,
+  humanRejected: 30,
   recruiterScreens: 4,
   technicalStages: 2,
   finalRounds: 1,
@@ -62,8 +62,15 @@ function NumberField({
         inputMode="numeric"
         min="0"
         max={max}
+        step="1"
         value={value}
-        onChange={(event) => onChange(name, Number(event.target.value || 0))}
+        onChange={(event) => {
+          const nextValue = Number(event.target.value || 0);
+          onChange(
+            name,
+            Math.min(max, Math.max(0, Math.trunc(nextValue))),
+          );
+        }}
       />
     </label>
   );
@@ -74,8 +81,11 @@ export default function Home() {
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [input, setInput] = useState(initialInput);
+  const [validationError, setValidationError] = useState("");
 
   const liveResult = useMemo(() => calculateScore(input), [input]);
+  const applicationOutcomeTotal =
+    input.ghosted + input.autoRejected + input.humanRejected;
 
   useEffect(() => {
     if (!started) return;
@@ -83,11 +93,33 @@ export default function Home() {
   }, [started, step]);
 
   function setNumber(name: keyof ScoreInput, value: number) {
+    setValidationError("");
     setInput((current) => ({ ...current, [name]: value }));
+  }
+
+  function continueQuiz() {
+    if (step === 1 && input.applications !== applicationOutcomeTotal) {
+      setValidationError(
+        `Applications sent must equal the accounted outcomes: ${input.ghosted} ghosted + ${input.autoRejected} automatic + ${input.humanRejected} human rejections = ${applicationOutcomeTotal}.`,
+      );
+      return;
+    }
+
+    setValidationError("");
+    setStep((current) => current + 1);
   }
 
   function submit(event: FormEvent) {
     event.preventDefault();
+
+    if (input.applications !== applicationOutcomeTotal) {
+      setValidationError(
+        "Applications sent no longer matches the accounted outcomes. Please fix the application math before revealing your rank.",
+      );
+      setStep(1);
+      return;
+    }
+
     const result = calculateScore(input);
     const encoded = encodeResult(result);
     try {
@@ -184,6 +216,18 @@ export default function Home() {
           onChange={setNumber}
         />
       </div>
+      <p
+        className={
+          input.applications === applicationOutcomeTotal
+            ? "application-balance is-valid"
+            : "application-balance"
+        }
+      >
+        <span>ACCOUNTED OUTCOMES</span>
+        <strong>
+          {applicationOutcomeTotal} / {input.applications}
+        </strong>
+      </p>
     </section>,
     <section className="quiz-panel" key="interviews">
       <p className="step-label">03 — Interview lore</p>
@@ -462,13 +506,22 @@ export default function Home() {
           </div>
           <form onSubmit={submit}>
             {steps[step]}
+            {validationError && (
+              <p className="validation-message" role="alert">
+                <strong>THE MATH HAS REJECTED YOUR APPLICATION.</strong>
+                {validationError}
+              </p>
+            )}
             <div className="quiz-actions">
               <button
                 type="button"
                 className="secondary-button"
                 onClick={() => {
                   if (step === 0) setStarted(false);
-                  else setStep((current) => current - 1);
+                  else {
+                    setValidationError("");
+                    setStep((current) => current - 1);
+                  }
                 }}
               >
                 ← Back
@@ -477,7 +530,7 @@ export default function Home() {
                 <button
                   type="button"
                   className="primary-button"
-                  onClick={() => setStep((current) => current + 1)}
+                  onClick={continueQuiz}
                 >
                   Continue →
                 </button>

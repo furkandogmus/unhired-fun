@@ -486,6 +486,44 @@ select:focus {
   font-weight: 700;
 }
 
+.application-balance {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border: 2px solid var(--orange);
+  background: #fff;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+}
+
+.application-balance.is-valid {
+  border-color: var(--ink);
+  background: var(--acid);
+}
+
+.application-balance strong {
+  white-space: nowrap;
+}
+
+.validation-message {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  display: grid;
+  gap: 5px;
+  border: 2px solid var(--ink);
+  background: var(--orange);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.validation-message strong {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+}
+
 .check-field {
   display: flex;
   align-items: center;
