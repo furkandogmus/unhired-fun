@@ -14,8 +14,16 @@ const sampleRows = [
   { nickname: "AnonymousApplicant", score: 2894, title: "VP of Unanswered Applications", league: "Open Unemployment League", days: 201 },
 ];
 
+const TAB_LEAGUE_MAP: Record<string, string | null> = {
+  Global: null,
+  Internships: "Internship League",
+  "New Graduates": "New Graduate League",
+  Layoffs: "Layoff League",
+};
+
 export default function LeaderboardPage() {
   const [localRows, setLocalRows] = useState<typeof sampleRows>([]);
+  const [activeTab, setActiveTab] = useState("Global");
 
   useEffect(() => {
     let frame = 0;
@@ -36,7 +44,9 @@ export default function LeaderboardPage() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  const leagueFilter = TAB_LEAGUE_MAP[activeTab];
   const rows = [...localRows, ...sampleRows]
+    .filter((row) => leagueFilter === null || row.league === leagueFilter)
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 
@@ -59,13 +69,15 @@ export default function LeaderboardPage() {
           </p>
         </div>
         <div className="league-tabs">
-          <button className="active">Global</button>
-          <button>Internships</button>
-          <button>New Graduates</button>
-          <button>Layoffs</button>
-          <EasterEgg>
-            AI tokens ran out before we could build the other three tabs. Maybe next sprint.
-          </EasterEgg>
+          {Object.keys(TAB_LEAGUE_MAP).map((tab) => (
+            <button
+              key={tab}
+              className={activeTab === tab ? "active" : undefined}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
         <div className="leaderboard-table">
           <div className="leaderboard-row leaderboard-header">
