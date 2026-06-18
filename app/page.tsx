@@ -567,6 +567,17 @@ export default function Home() {
                 unhired.fun domain? Couldn&apos;t afford it. We&apos;re unemployed.
               </EasterEgg>
             </span>
+            <span className="footer-coffee">
+              <a
+                href="mailto:furkandogmus9183@gmail.com?subject=I%20owe%20Unhired.fun%20a%20coffee"
+              >
+                Buy me a coffee ☕
+              </a>
+              <EasterEgg>
+                We tried adding a real coffee button, but accepting one coffee
+                somehow turned into a tax-office simulation. Email is cheaper.
+              </EasterEgg>
+            </span>
             <p>The game mocks hiring systems, not unemployed people.</p>
           </footer>
         </>
